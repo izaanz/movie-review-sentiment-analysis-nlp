@@ -96,7 +96,7 @@ The app is deployed on the cloud and can be accessed through the following link:
 
 https://movie-review-sentiment-analysis-nlp.onrender.com/
 
-![Cloud Deployment](https://movie-review-sentiment-analysis-nlp.onrender.com/)
+![Cloud Deployment](https://github.com/izaanz/movie-review-sentiment-analysis-nlp/blob/main/img/Cloud%20Deployment.png)
 
 ## Contributions
 
