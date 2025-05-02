@@ -56,8 +56,7 @@ LinearSVC(
 pip install -r requirements.txt
 ```
 To access the entire code
-```nlp.ipynp
-```
+Just access the `nlp.ipynb` notebook.
 🌐 Run Flask App (Local)
 ```bash
 python app.py
