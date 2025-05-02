@@ -14,8 +14,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Load model and vectorizer
-model = pickle.load(open("model.pkl", "rb"))
-vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+model = pickle.load(open("model/model.pkl", "rb"))
+vectorizer = pickle.load(open("model/vectorizer.pkl", "rb"))
 lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words('english'))
 
