@@ -1,0 +1,12 @@
+flask
+waitress
+pandas
+numpy
+tqdm
+matplotlib
+seaborn
+scikit-learn
+xgboost
+lightgbm
+nltk
+wordninja

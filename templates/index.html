@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IMDb Sentiment Analyzer</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f5f5f5;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #f5c518; /* IMDb yellow */
+      color: #000;
+      padding: 1rem 2rem;
+      font-weight: 700;
+      font-size: 1.75rem;
+      letter-spacing: 1.5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      user-select: none;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+      color: #222;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 1rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+      font-family: inherit;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #f5c518;
+      box-shadow: 0 0 8px rgba(245,197,24,0.6);
+    }
+
+    button {
+      background-color: #f5c518;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #000;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:hover:not(:disabled) {
+      background-color: #ddb30a;
+    }
+    button:disabled {
+      background-color: #f5c518;
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .result {
+      font-weight: 700;
+      font-size: 1.25rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      text-align: center;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .result.positive {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1.5px solid #c3e6cb;
+    }
+    .result.negative {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1.5px solid #f5c6cb;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #f5c518;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem 2rem;
+      font-size: 0.9rem;
+      color: #666;
+      user-select: none;
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 1.5rem;
+      }
+      header {
+        font-size: 1.5rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>IMDb Sentiment Analyzer</header>
+  <main>
+    <div class="card">
+      <label for="review">Paste an IMDb review</label>
+      <textarea id="review" placeholder="Type or paste the review here..."></textarea>
+      <button id="analyzeBtn" disabled>Analyze</button>
+      <div id="loading" class="spinner" style="display:none;"></div>
+      <div id="result" class="result" style="display:none;"></div>
+    </div>
+  </main>
+  <footer>© <span id="year"></span> Sentiment Analyzer</footer>
+
+  <script>
+    const reviewInput = document.getElementById('review');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const loadingSpinner = document.getElementById('loading');
+    const resultDiv = document.getElementById('result');
+    const yearSpan = document.getElementById('year');
+
+    yearSpan.textContent = new Date().getFullYear();
+
+    reviewInput.addEventListener('input', () => {
+      analyzeBtn.disabled = reviewInput.value.trim() === '';
+      resultDiv.style.display = 'none';
+    });
+
+    analyzeBtn.addEventListener('click', () => {
+      const reviewText = reviewInput.value.trim();
+      if (!reviewText) return;
+
+      analyzeBtn.disabled = true;
+      loadingSpinner.style.display = 'block';
+      resultDiv.style.display = 'none';
+
+	fetch('/predict', {
+	  method: 'POST',
+	  headers: {
+		'Content-Type': 'application/json'
+	  },
+	  body: JSON.stringify({ review: reviewText })
+	})
+	.then(response => response.json())
+	.then(data => {
+	  loadingSpinner.style.display = 'none';
+	  resultDiv.style.display = 'flex';
+
+	  const sentiment = data.sentiment; // assuming backend returns { "sentiment": "positive" }
+	  resultDiv.className = 'result ' + sentiment;
+	  resultDiv.textContent = sentiment === 'positive' ? '👍 Positive Review' : '👎 Negative Review';
+	})
+	.catch(error => {
+	  loadingSpinner.style.display = 'none';
+	  resultDiv.style.display = 'flex';
+	  resultDiv.className = 'result negative';
+	  resultDiv.textContent = '⚠️ Error analyzing sentiment.';
+	  console.error('Error:', error);
+	})
+	.finally(() => {
+	  analyzeBtn.disabled = false;
+	});
+    });
+  </script>
+</body>
+</html>
