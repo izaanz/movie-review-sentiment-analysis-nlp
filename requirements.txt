@@ -10,3 +10,4 @@ xgboost
 lightgbm
 nltk
 wordninja
+flask-cors
