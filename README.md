@@ -1,6 +1,6 @@
 # 🎬 IMDB Sentiment Analysis with NLP, Linear SVC, Flask & Docker
 
-This project analyzes the sentiment of 50,000 movie reviews from the IMDB dataset using natural language processing and machine learning techniques. The final model achieves an F1 score of **~89%** on the test set.
+This project analyzes the sentiment of 50,000 movie reviews from the IMDB dataset using natural language processing and machine learning techniques. The final model achieves an F1 score of **~90%** on the test set.
 
 - Note: This project is part of the course: **DLBAIPNLP01 – Project: NLP - Task 1**
 
